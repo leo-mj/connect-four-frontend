@@ -16,23 +16,16 @@ export function connectedFour(allRows: Board): boolean {
 
 function fourInRow(allRows: Board) {
   for (const row of allRows) {
-    if (!row.includes("A" || "B")) {
-      return false;
-    }
-    const checkRow = [...row];
-    let cellStack: Row = [];
-    while (checkRow.length > 0) {
-      const currentCell = checkRow.shift();
-      console.log(currentCell);
-      const topOfStack = checkRow[checkRow.length - 1];
-      if (currentCell && currentCell !== topOfStack) {
-        cellStack = [];
-        cellStack.push(currentCell);
-      } else if (currentCell && currentCell === topOfStack) {
-        cellStack.push(currentCell);
+    let cellQueue: Row = [];
+    for (const cell of row) {
+      const firstInQueue = cellQueue[0];
+      if (cell !== firstInQueue) {
+        cellQueue = [];
       }
-
-      if (cellStack.length === 4) {
+      if (cell === "A" || cell === "B") {
+        cellQueue.push(cell);
+      }
+      if (cellQueue.length === 4) {
         return true;
       }
     }

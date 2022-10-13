@@ -22,7 +22,11 @@ export function GameBoard(): JSX.Element {
       <div className="board-header">
         {!winner && <p>Player {player}'s turn</p>}
         {winner && <p>Player {winner} is the Winner!</p>}
-        <button onClick={() => handleResetButton(setAllRows)}>Reset</button>
+        <button
+          onClick={() => handleResetButton(setAllRows, setWinner, setPlayer)}
+        >
+          Reset
+        </button>
       </div>
       {allRows.map((row, i) => (
         <div className="row" key={i}>
