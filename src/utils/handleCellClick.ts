@@ -1,3 +1,4 @@
+import { Socket } from "socket.io-client";
 import { connectedFour } from "./connectedFour";
 import { Board, Row } from "./types";
 
@@ -8,17 +9,23 @@ export function handleCellClick(
   player: "A" | "B",
   setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>,
   winner: null | "A" | "B",
-  setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>
+  setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>,
+  socket: Socket | null
 ): void {
   const rowToFill = findLowestEmptyRowInCol(allRows, col);
   if (rowToFill === undefined || winner !== null) {
     return;
   }
   const changedBoard: Board = changeBoard(allRows, rowToFill, col, player);
-  setAllRows(changedBoard);
-  if (connectedFour(changedBoard, col, rowToFill)) {
-    setWinner(player);
+  if (socket) {
+    socket.emit("cell click", changedBoard);
   }
+  if (connectedFour(changedBoard, col, rowToFill)) {
+    socket !== null
+      ? socket.emit("winner", player)
+      : console.log("not connected to socket");
+  }
+
   setPlayer(player === "A" ? "B" : "A");
   return;
 }

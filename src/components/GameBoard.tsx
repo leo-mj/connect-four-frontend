@@ -1,24 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   handleResetButton,
   generateEmptyBoard,
 } from "../utils/handleResetButton";
 import { Board } from "../utils/types";
 import { Cell } from "./Cell";
+import { io, Socket } from "socket.io-client";
+import { socketURL } from "../utils/socketURL";
 
 export function GameBoard(): JSX.Element {
   const [allRows, setAllRows] = useState<Board>(generateEmptyBoard());
   const [player, setPlayer] = useState<"A" | "B">("A");
   const [winner, setWinner] = useState<null | "A" | "B">(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    console.log("connecting to socket.io server");
+    const newSocket: Socket = io(socketURL);
+    setSocket(newSocket);
+    console.log("connected to socket.io server");
+
+    newSocket.prependAnyOutgoing((...args) => {
+      console.log("sending to socket.io server: ", args);
+    });
+    newSocket.prependAny((...args) => {
+      console.log("coming from socket.io server: ", args);
+    });
+
+    newSocket.on("connect", () => console.log("fully connected"));
+    newSocket.on("reset", () =>
+      handleResetButton(setAllRows, setWinner, setPlayer, null)
+    );
+    newSocket.on("cell clicked by other player", (changedBoard: Board) =>
+      setAllRows(changedBoard)
+    );
+    newSocket.on("game won by", (winner: "A" | "B") => setWinner(winner));
+
+    function cleanupSocketIO() {
+      console.log(
+        "disconnecting from socket.io server, deregistering listeners"
+      );
+      newSocket.removeAllListeners();
+      newSocket.disconnect();
+    }
+    return cleanupSocketIO;
+  }, []);
 
   return (
     <div className="board">
       <div className="board-header">
         {!winner && <p>Player {player}'s turn</p>}
-        {winner && <p>Player {winner} is the Winner!</p>}
+        {winner && <p>🎉 Player {winner} is the Winner! 🎉 </p>}
         <button
           onClick={() => {
-            handleResetButton(setAllRows, setWinner, setPlayer);
+            handleResetButton(setAllRows, setWinner, setPlayer, socket);
           }}
         >
           Reset
@@ -37,6 +72,7 @@ export function GameBoard(): JSX.Element {
                 allRows={allRows}
                 setAllRows={setAllRows}
                 col={j}
+                socket={socket}
               />
             </div>
           ))}

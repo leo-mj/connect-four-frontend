@@ -1,3 +1,4 @@
+import { Socket } from "socket.io-client";
 import { handleCellClick } from "../utils/handleCellClick";
 import { Board, CellValue } from "../utils/types";
 
@@ -10,6 +11,7 @@ interface IPropsCell {
   allRows: Board;
   setAllRows: React.Dispatch<React.SetStateAction<Board>>;
   col: number;
+  socket: Socket | null;
 }
 
 export function Cell({
@@ -21,6 +23,7 @@ export function Cell({
   allRows,
   setAllRows,
   col,
+  socket,
 }: IPropsCell): JSX.Element {
   return (
     <>
@@ -35,7 +38,8 @@ export function Cell({
               player,
               setPlayer,
               winner,
-              setWinner
+              setWinner,
+              socket
             )
           }
         ></div>
@@ -51,7 +55,8 @@ export function Cell({
               player,
               setPlayer,
               winner,
-              setWinner
+              setWinner,
+              socket
             )
           }
         ></div>
@@ -67,7 +72,8 @@ export function Cell({
               player,
               setPlayer,
               winner,
-              setWinner
+              setWinner,
+              socket
             )
           }
         ></div>
