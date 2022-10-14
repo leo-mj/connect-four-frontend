@@ -11,6 +11,7 @@ import { socketURL } from "../utils/socketURL";
 export function GameBoard(): JSX.Element {
   const [allRows, setAllRows] = useState<Board>(generateEmptyBoard());
   const [player, setPlayer] = useState<"A" | "B">("A");
+  const [myTurn, setMyTurn] = useState<boolean>(true);
   const [winner, setWinner] = useState<null | "A" | "B">(null);
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -32,12 +33,13 @@ export function GameBoard(): JSX.Element {
       handleResetButton(setAllRows, setWinner, setPlayer, null)
     );
     newSocket.on(
-      "cell clicked by other player",
+      "cell clicked by",
       (changedBoard: Board, otherPlayer: "A" | "B") => {
         setAllRows(changedBoard);
         setPlayer(otherPlayer === "A" ? "B" : "A");
       }
     );
+    newSocket.on("next player", () => setMyTurn(true));
     newSocket.on("game won by", (winner: "A" | "B") => setWinner(winner));
 
     function cleanupSocketIO() {
@@ -70,6 +72,8 @@ export function GameBoard(): JSX.Element {
               <Cell
                 player={player}
                 setPlayer={setPlayer}
+                myTurn={myTurn}
+                setMyTurn={setMyTurn}
                 winner={winner}
                 setWinner={setWinner}
                 cellValue={cell}
