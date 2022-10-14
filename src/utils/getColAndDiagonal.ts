@@ -35,7 +35,8 @@ export function getNorthWestDiagonal(
 ): Diagonal {
   const diagonalNW: Diagonal = [];
   const startingRow = row - (6 - col) >= 0 ? row - (6 - col) : 0;
-  const startingCol = col + row >= 6 ? col + row : 6;
+  const startingCol = col + row <= 6 ? col + row : 6;
+  console.log(startingRow, startingCol);
   for (
     let currentRow = startingRow, currentCol = startingCol;
     currentRow < 6 && currentCol >= 0;
@@ -44,5 +45,6 @@ export function getNorthWestDiagonal(
     const currentCell = allRows[currentRow][currentCol];
     diagonalNW.push(currentCell);
   }
+  console.log(diagonalNW);
   return diagonalNW;
 }
