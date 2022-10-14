@@ -31,8 +31,12 @@ export function GameBoard(): JSX.Element {
     newSocket.on("reset", () =>
       handleResetButton(setAllRows, setWinner, setPlayer, null)
     );
-    newSocket.on("cell clicked by other player", (changedBoard: Board) =>
-      setAllRows(changedBoard)
+    newSocket.on(
+      "cell clicked by other player",
+      (changedBoard: Board, otherPlayer: "A" | "B") => {
+        setAllRows(changedBoard);
+        setPlayer(otherPlayer === "A" ? "B" : "A");
+      }
     );
     newSocket.on("game won by", (winner: "A" | "B") => setWinner(winner));
 

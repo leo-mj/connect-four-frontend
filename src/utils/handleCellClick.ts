@@ -18,7 +18,7 @@ export function handleCellClick(
   }
   const changedBoard: Board = changeBoard(allRows, rowToFill, col, player);
   if (socket) {
-    socket.emit("cell click", changedBoard);
+    socket.emit("cell click", changedBoard, player);
   }
   if (connectedFour(changedBoard, col, rowToFill)) {
     socket !== null
