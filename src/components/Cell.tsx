@@ -5,6 +5,8 @@ import { Board, CellValue } from "../utils/types";
 interface IPropsCell {
   player: "A" | "B";
   setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>;
+  myTurn: boolean;
+  setMyTurn: React.Dispatch<React.SetStateAction<boolean>>;
   winner: null | "A" | "B";
   setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>;
   cellValue: CellValue;
@@ -17,6 +19,8 @@ interface IPropsCell {
 export function Cell({
   player,
   setPlayer,
+  myTurn,
+  setMyTurn,
   winner,
   setWinner,
   cellValue,
@@ -37,6 +41,8 @@ export function Cell({
               col,
               player,
               setPlayer,
+              myTurn,
+              setMyTurn,
               winner,
               setWinner,
               socket
@@ -54,6 +60,8 @@ export function Cell({
               col,
               player,
               setPlayer,
+              myTurn,
+              setMyTurn,
               winner,
               setWinner,
               socket
@@ -71,6 +79,8 @@ export function Cell({
               col,
               player,
               setPlayer,
+              myTurn,
+              setMyTurn,
               winner,
               setWinner,
               socket

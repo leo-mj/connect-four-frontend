@@ -8,12 +8,14 @@ export function handleCellClick(
   col: number,
   player: "A" | "B",
   setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>,
+  myTurn: boolean,
+  setMyTurn: React.Dispatch<React.SetStateAction<boolean>>,
   winner: null | "A" | "B",
   setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>,
   socket: Socket | null
 ): void {
   const rowToFill = findLowestEmptyRowInCol(allRows, col);
-  if (rowToFill === undefined || winner !== null) {
+  if (rowToFill === undefined || winner !== null || !myTurn) {
     return;
   }
   const changedBoard: Board = changeBoard(allRows, rowToFill, col, player);
@@ -25,7 +27,7 @@ export function handleCellClick(
       ? socket.emit("winner", player)
       : console.log("not connected to socket");
   }
-
+  setMyTurn(false);
   setPlayer(player === "A" ? "B" : "A");
   return;
 }
