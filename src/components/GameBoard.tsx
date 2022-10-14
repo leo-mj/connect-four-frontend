@@ -1,19 +1,13 @@
 import { useState } from "react";
-import { handleResetButton } from "../utils/handleResetButton";
+import {
+  handleResetButton,
+  generateEmptyBoard,
+} from "../utils/handleResetButton";
 import { Board } from "../utils/types";
 import { Cell } from "./Cell";
 
 export function GameBoard(): JSX.Element {
-  const board: Board = [
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-  ];
-
-  const [allRows, setAllRows] = useState<Board>(board);
+  const [allRows, setAllRows] = useState<Board>(generateEmptyBoard());
   const [player, setPlayer] = useState<"A" | "B">("A");
   const [winner, setWinner] = useState<null | "A" | "B">(null);
 
@@ -23,7 +17,9 @@ export function GameBoard(): JSX.Element {
         {!winner && <p>Player {player}'s turn</p>}
         {winner && <p>Player {winner} is the Winner!</p>}
         <button
-          onClick={() => handleResetButton(setAllRows, setWinner, setPlayer)}
+          onClick={() => {
+            handleResetButton(setAllRows, setWinner, setPlayer);
+          }}
         >
           Reset
         </button>
@@ -35,6 +31,7 @@ export function GameBoard(): JSX.Element {
               <Cell
                 player={player}
                 setPlayer={setPlayer}
+                winner={winner}
                 setWinner={setWinner}
                 cellValue={cell}
                 allRows={allRows}

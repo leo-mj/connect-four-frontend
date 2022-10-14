@@ -1,18 +1,25 @@
+import { connectedFour } from "./connectedFour";
 import { Board, Row } from "./types";
 
-export function changeCellValue(
+export function handleCellClick(
   allRows: Board,
   setAllRows: React.Dispatch<React.SetStateAction<Board>>,
   col: number,
-  player: "A" | "B"
+  player: "A" | "B",
+  setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>,
+  winner: null | "A" | "B",
+  setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>
 ): void {
-  const rowToFill: number | undefined = findLowestEmptyRowInCol(allRows, col);
-  if (rowToFill === undefined) {
+  const rowToFill = findLowestEmptyRowInCol(allRows, col);
+  if (rowToFill === undefined || winner !== null) {
     return;
   }
-
   const changedBoard: Board = changeBoard(allRows, rowToFill, col, player);
   setAllRows(changedBoard);
+  if (connectedFour(changedBoard, col, rowToFill)) {
+    setWinner(player);
+  }
+  setPlayer(player === "A" ? "B" : "A");
   return;
 }
 
@@ -36,7 +43,7 @@ function changeBoard(
   col: number,
   player: "A" | "B"
 ): Board {
-  const changedBoard: Board = [...allRows];
+  const changedBoard: Board = JSON.parse(JSON.stringify(allRows));
   const rowToChange: Row = changedBoard[rowToFill];
   rowToChange.splice(col, 1, player);
   return changedBoard;

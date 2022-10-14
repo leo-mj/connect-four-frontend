@@ -1,10 +1,10 @@
-import { changeCellValue } from "../utils/changeCellValue";
-import { connectedFour } from "../utils/connectedFour";
-import { aColor, bColor, Board, CellValue, white } from "../utils/types";
+import { handleCellClick } from "../utils/handleCellClick";
+import { Board, CellValue } from "../utils/types";
 
 interface IPropsCell {
   player: "A" | "B";
   setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>;
+  winner: null | "A" | "B";
   setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>;
   cellValue: CellValue;
   allRows: Board;
@@ -15,41 +15,61 @@ interface IPropsCell {
 export function Cell({
   player,
   setPlayer,
+  winner,
   setWinner,
   cellValue,
   allRows,
   setAllRows,
   col,
 }: IPropsCell): JSX.Element {
-  const handleCellClick = () => {
-    changeCellValue(allRows, setAllRows, col, player);
-    if (connectedFour(allRows)) {
-      setWinner(player);
-    }
-    setPlayer(player === "A" ? "B" : "A");
-  };
-
   return (
     <>
       {cellValue === null && (
         <div
-          className="cell"
-          onClick={handleCellClick}
-          style={{ backgroundColor: white }}
+          className="cell null"
+          onClick={() =>
+            handleCellClick(
+              allRows,
+              setAllRows,
+              col,
+              player,
+              setPlayer,
+              winner,
+              setWinner
+            )
+          }
         ></div>
       )}
       {cellValue === "A" && (
         <div
-          className="cell"
-          onClick={handleCellClick}
-          style={{ backgroundColor: aColor }}
+          className="cell A"
+          onClick={() =>
+            handleCellClick(
+              allRows,
+              setAllRows,
+              col,
+              player,
+              setPlayer,
+              winner,
+              setWinner
+            )
+          }
         ></div>
       )}
       {cellValue === "B" && (
         <div
-          className="cell"
-          onClick={handleCellClick}
-          style={{ backgroundColor: bColor }}
+          className="cell B"
+          onClick={() =>
+            handleCellClick(
+              allRows,
+              setAllRows,
+              col,
+              player,
+              setPlayer,
+              winner,
+              setWinner
+            )
+          }
         ></div>
       )}
     </>

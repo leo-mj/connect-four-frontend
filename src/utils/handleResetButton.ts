@@ -5,14 +5,18 @@ export function handleResetButton(
   setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>,
   setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>
 ): void {
-  setAllRows([
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-  ]);
+  setAllRows(generateEmptyBoard());
   setWinner(null);
   setPlayer("A");
+}
+
+export function generateEmptyBoard(): Board {
+  return [
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+  ];
 }
