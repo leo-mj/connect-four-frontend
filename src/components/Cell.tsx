@@ -1,34 +1,25 @@
-import { Socket } from "socket.io-client";
 import { handleCellClick } from "../utils/handleCellClick";
-import { Board, CellValue } from "../utils/types";
+import { MainStates } from "../utils/types";
 
 interface IPropsCell {
-  player: "A" | "B";
-  setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>;
-  myTurn: boolean;
-  setMyTurn: React.Dispatch<React.SetStateAction<boolean>>;
-  winner: null | "A" | "B";
-  setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>;
-  cellValue: CellValue;
-  allRows: Board;
-  setAllRows: React.Dispatch<React.SetStateAction<Board>>;
+  mainStates: MainStates;
+  cellValue: null | "A" | "B";
   col: number;
-  socket: Socket | null;
 }
 
-export function Cell({
-  player,
-  setPlayer,
-  myTurn,
-  setMyTurn,
-  winner,
-  setWinner,
-  cellValue,
-  allRows,
-  setAllRows,
-  col,
-  socket,
-}: IPropsCell): JSX.Element {
+export function Cell({ mainStates, cellValue, col }: IPropsCell): JSX.Element {
+  const {
+    player,
+    setPlayer,
+    myTurn,
+    setMyTurn,
+    winner,
+    setWinner,
+    allRows,
+    setAllRows,
+    socket,
+  } = mainStates;
+
   return (
     <>
       {cellValue === null && (

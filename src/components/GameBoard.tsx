@@ -1,56 +1,14 @@
-import { useEffect, useState } from "react";
-import {
-  handleResetButton,
-  generateEmptyBoard,
-} from "../utils/handleResetButton";
-import { Board } from "../utils/types";
+import { handleResetButton } from "../utils/handleResetButton";
+import { MainStates } from "../utils/types";
 import { Cell } from "./Cell";
-import { io, Socket } from "socket.io-client";
-import { socketURL } from "../utils/socketURL";
 
-export function GameBoard(): JSX.Element {
-  const [allRows, setAllRows] = useState<Board>(generateEmptyBoard());
-  const [player, setPlayer] = useState<"A" | "B">("A");
-  const [myTurn, setMyTurn] = useState<boolean>(true);
-  const [winner, setWinner] = useState<null | "A" | "B">(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
+interface IPropsGameBoard {
+  mainStates: MainStates;
+}
 
-  useEffect(() => {
-    console.log("connecting to socket.io server");
-    const newSocket: Socket = io(socketURL);
-    setSocket(newSocket);
-    console.log("connected to socket.io server");
-
-    newSocket.prependAnyOutgoing((...args) => {
-      console.log("sending to socket.io server: ", args);
-    });
-    newSocket.prependAny((...args) => {
-      console.log("coming from socket.io server: ", args);
-    });
-
-    newSocket.on("connect", () => console.log("fully connected"));
-    newSocket.on("reset", () =>
-      handleResetButton(setAllRows, setWinner, setPlayer, null)
-    );
-    newSocket.on(
-      "cell clicked by",
-      (changedBoard: Board, otherPlayer: "A" | "B") => {
-        setAllRows(changedBoard);
-        setPlayer(otherPlayer === "A" ? "B" : "A");
-      }
-    );
-    newSocket.on("next player", () => setMyTurn(true));
-    newSocket.on("game won by", (winner: "A" | "B") => setWinner(winner));
-
-    function cleanupSocketIO() {
-      console.log(
-        "disconnecting from socket.io server, deregistering listeners"
-      );
-      newSocket.removeAllListeners();
-      newSocket.disconnect();
-    }
-    return cleanupSocketIO;
-  }, []);
+export function GameBoard({ mainStates }: IPropsGameBoard): JSX.Element {
+  const { player, setPlayer, winner, setWinner, allRows, setAllRows, socket } =
+    mainStates;
 
   return (
     <div className="board">
@@ -69,19 +27,7 @@ export function GameBoard(): JSX.Element {
         <div className="row" key={i}>
           {row.map((cell, j) => (
             <div key={j}>
-              <Cell
-                player={player}
-                setPlayer={setPlayer}
-                myTurn={myTurn}
-                setMyTurn={setMyTurn}
-                winner={winner}
-                setWinner={setWinner}
-                cellValue={cell}
-                allRows={allRows}
-                setAllRows={setAllRows}
-                col={j}
-                socket={socket}
-              />
+              <Cell mainStates={mainStates} cellValue={cell} col={j} />
             </div>
           ))}
         </div>
