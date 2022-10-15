@@ -3,12 +3,21 @@ body {
 }
 
 .app {
-  padding: 10% 32% 32% 32%;
+  padding: 1% 32% 32% 32%;
+}
+
+.game-mode-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3%;
+  button {
+    font-size: xx-large;
+  }
 }
 
 @media screen and (max-width: 1200px) {
   .app {
-    padding: 10%;
+    padding: 1% 10% 10% 10%;
   }
 }
 
