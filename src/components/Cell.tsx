@@ -18,6 +18,7 @@ export function Cell({ mainStates, cellValue, col }: IPropsCell): JSX.Element {
     allRows,
     setAllRows,
     socket,
+    chosenOpponent,
   } = mainStates;
 
   return (
@@ -36,7 +37,8 @@ export function Cell({ mainStates, cellValue, col }: IPropsCell): JSX.Element {
               setMyTurn,
               winner,
               setWinner,
-              socket
+              socket,
+              chosenOpponent
             )
           }
         ></div>
@@ -55,7 +57,8 @@ export function Cell({ mainStates, cellValue, col }: IPropsCell): JSX.Element {
               setMyTurn,
               winner,
               setWinner,
-              socket
+              socket,
+              chosenOpponent
             )
           }
         ></div>
@@ -74,7 +77,8 @@ export function Cell({ mainStates, cellValue, col }: IPropsCell): JSX.Element {
               setMyTurn,
               winner,
               setWinner,
-              socket
+              socket,
+              chosenOpponent
             )
           }
         ></div>

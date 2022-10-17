@@ -17,4 +17,17 @@ export interface MainStates {
   setAllRows: React.Dispatch<React.SetStateAction<Board>>;
   socket: Socket | null;
   setSocket: React.Dispatch<React.SetStateAction<Socket | null>>;
+  gameMode: "multiplayer" | "find-opponent" | "one-screen";
+  setGameMode: React.Dispatch<
+    React.SetStateAction<"multiplayer" | "find-opponent" | "one-screen">
+  >;
+  availablePlayers: OnlinePlayer[];
+  setAvailablePlayers: React.Dispatch<React.SetStateAction<OnlinePlayer[]>>;
+  chosenOpponent: OnlinePlayer | null;
+  setChosenOpponent: React.Dispatch<React.SetStateAction<OnlinePlayer | null>>;
+}
+
+export interface OnlinePlayer {
+  username: string;
+  id: string;
 }

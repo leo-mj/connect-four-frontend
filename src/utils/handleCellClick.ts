@@ -1,6 +1,6 @@
 import { Socket } from "socket.io-client";
 import { connectedFour } from "./connectedFour";
-import { Board, Row } from "./types";
+import { Board, OnlinePlayer, Row } from "./types";
 
 export function handleCellClick(
   allRows: Board,
@@ -12,21 +12,22 @@ export function handleCellClick(
   setMyTurn: React.Dispatch<React.SetStateAction<boolean>>,
   winner: null | "A" | "B",
   setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>,
-  socket: Socket | null
+  socket: Socket | null,
+  chosenOpponent: OnlinePlayer | null
 ): void {
   const rowToFill = findLowestEmptyRowInCol(allRows, col);
   if (rowToFill === undefined || winner !== null || !myTurn) {
     return;
   }
   const changedBoard: Board = changeBoard(allRows, rowToFill, col, player);
-  if (socket) {
-    socket.emit("cell click", changedBoard, player);
+  if (socket && chosenOpponent) {
+    socket.emit("cell click", changedBoard, player, chosenOpponent);
     setMyTurn(false);
   }
   setAllRows(changedBoard);
   const wonGame = connectedFour(changedBoard, col, rowToFill);
-  if (wonGame && socket) {
-    socket.emit("winner", player);
+  if (wonGame && socket && chosenOpponent) {
+    socket.emit("winner", player, chosenOpponent);
     setWinner(player);
   } else if (wonGame) {
     setWinner(player);
