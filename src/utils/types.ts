@@ -21,8 +21,10 @@ export interface MainStates {
   setGameMode: React.Dispatch<
     React.SetStateAction<"multiplayer" | "find-opponent" | "one-screen">
   >;
-  availablePlayers: OnlinePlayer[];
-  setAvailablePlayers: React.Dispatch<React.SetStateAction<OnlinePlayer[]>>;
+  onlinePlayers: OnlinePlayer[];
+  setOnlinePlayers: React.Dispatch<React.SetStateAction<OnlinePlayer[]>>;
+  busyPlayers: OnlinePlayer[];
+  setBusyPlayers: React.Dispatch<React.SetStateAction<OnlinePlayer[]>>;
   chosenOpponent: OnlinePlayer | null;
   setChosenOpponent: React.Dispatch<React.SetStateAction<OnlinePlayer | null>>;
 }

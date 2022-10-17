@@ -19,8 +19,8 @@ function App(): JSX.Element {
   const [myTurn, setMyTurn] = useState<boolean>(true);
   const [winner, setWinner] = useState<null | "A" | "B">(null);
   const [socket, setSocket] = useState<Socket | null>(null);
-
-  const [availablePlayers, setAvailablePlayers] = useState<OnlinePlayer[]>([]);
+  const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[]>([]);
+  const [busyPlayers, setBusyPlayers] = useState<OnlinePlayer[]>([]);
   const [chosenOpponent, setChosenOpponent] = useState<OnlinePlayer | null>(
     null
   );
@@ -38,8 +38,10 @@ function App(): JSX.Element {
     setSocket: setSocket,
     gameMode: gameMode,
     setGameMode: setGameMode,
-    availablePlayers: availablePlayers,
-    setAvailablePlayers: setAvailablePlayers,
+    onlinePlayers: onlinePlayers,
+    setOnlinePlayers: setOnlinePlayers,
+    busyPlayers: busyPlayers,
+    setBusyPlayers: setBusyPlayers,
     chosenOpponent: chosenOpponent,
     setChosenOpponent: setChosenOpponent,
   };
@@ -60,25 +62,28 @@ function App(): JSX.Element {
     handleResetButton(mainStates);
   };
 
+  const handleLeaveGameButton = () => {
+    if (socket && chosenOpponent !== null) {
+      socket.emit("left game", chosenOpponent);
+    }
+    setGameMode("find-opponent");
+  };
+
   return (
     <div className="app">
       <div className="game-mode-buttons">
-        {gameMode !== "one-screen" && (
+        {gameMode === "find-opponent" && (
           <button onClick={handleOneScreenButton}>Play on one screen</button>
         )}
         {gameMode === "one-screen" && (
           <button onClick={handleMultiPlayerButton}>Play online</button>
         )}
+        {gameMode === "multiplayer" && (
+          <button onClick={handleLeaveGameButton}>Leave game</button>
+        )}
       </div>
       {gameMode === "find-opponent" && socket && (
-        <FindOpponent
-          availablePlayers={availablePlayers}
-          setAvailablePlayers={setAvailablePlayers}
-          setChosenOpponent={setChosenOpponent}
-          socket={socket}
-          gameMode={gameMode}
-          setGameMode={setGameMode}
-        />
+        <FindOpponent mainStates={mainStates} />
       )}
       {gameMode !== "find-opponent" && <GameBoard mainStates={mainStates} />}
     </div>

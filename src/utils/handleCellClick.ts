@@ -20,13 +20,13 @@ export function handleCellClick(
     return;
   }
   const changedBoard: Board = changeBoard(allRows, rowToFill, col, player);
-  if (socket && chosenOpponent) {
+  if (socket && chosenOpponent !== null) {
     socket.emit("cell click", changedBoard, player, chosenOpponent);
     setMyTurn(false);
   }
   setAllRows(changedBoard);
   const wonGame = connectedFour(changedBoard, col, rowToFill);
-  if (wonGame && socket && chosenOpponent) {
+  if (wonGame && socket && chosenOpponent !== null) {
     socket.emit("winner", player, chosenOpponent);
     setWinner(player);
   } else if (wonGame) {

@@ -6,13 +6,14 @@ export function handleResetButton({
   setPlayer,
   setMyTurn,
   socket,
+  chosenOpponent,
 }: MainStates): void {
   setAllRows(generateEmptyBoard());
   setWinner(null);
   setPlayer("A");
   setMyTurn(true);
   if (socket) {
-    socket.emit("reset");
+    socket.emit("reset", chosenOpponent);
   }
 }
 

@@ -10,10 +10,10 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
     setPlayer,
     setWinner,
     setSocket,
-    availablePlayers,
-    setAvailablePlayers,
+    setOnlinePlayers,
     setChosenOpponent,
     setGameMode,
+    setBusyPlayers,
   } = mainStates;
 
   console.log("connecting to socket.io server");
@@ -24,14 +24,19 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
   newSocket.prependAnyOutgoing((...args) => {
     console.log("sending to socket.io server: ", args);
   });
+
   newSocket.prependAny((...args) => {
     console.log("coming from socket.io server: ", args);
   });
 
   newSocket.on("connect", () => console.log("fully connected"));
 
-  newSocket.on("players online updated", (playersOnline: OnlinePlayer[]) =>
-    setAvailablePlayers(playersOnline)
+  newSocket.on(
+    "players online updated",
+    (playersOnline: OnlinePlayer[], playersBusy: OnlinePlayer[]) => {
+      setOnlinePlayers(playersOnline);
+      setBusyPlayers(playersBusy);
+    }
   );
 
   newSocket.on("challenged", (challenger: OnlinePlayer) => {
@@ -47,12 +52,13 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
     }
   });
 
-  newSocket.on("your challenge accepted", (opponentId: string) => {
-    const yourOpponent: OnlinePlayer = availablePlayers.filter(
-      (onlinePlayer) => onlinePlayer.id === opponentId
-    )[0];
+  newSocket.on("your challenge accepted", (yourOpponent: OnlinePlayer) => {
     setChosenOpponent(yourOpponent);
     setGameMode("multiplayer");
+  });
+
+  newSocket.on("player busy", (busyPlayer: OnlinePlayer) => {
+    window.alert(busyPlayer.username + " is in another game");
   });
 
   newSocket.on("reset", () => handleResetButton(mainStates));
@@ -67,6 +73,11 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
   );
 
   newSocket.on("game won by", (winner: "A" | "B") => setWinner(winner));
+
+  newSocket.on("opponent left game", (opponentName: string) => {
+    alert(opponentName + " has left the game");
+    setGameMode("find-opponent");
+  });
 
   return cleanupSocketIO;
 }
