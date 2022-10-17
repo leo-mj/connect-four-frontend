@@ -7,8 +7,7 @@ interface IPropsGameBoard {
 }
 
 export function GameBoard({ mainStates }: IPropsGameBoard): JSX.Element {
-  const { player, setPlayer, winner, setWinner, allRows, setAllRows, socket } =
-    mainStates;
+  const { player, winner, allRows } = mainStates;
 
   return (
     <div className="board">
@@ -17,7 +16,7 @@ export function GameBoard({ mainStates }: IPropsGameBoard): JSX.Element {
         {winner && <p>🎉 Player {winner} is the Winner! 🎉 </p>}
         <button
           onClick={() => {
-            handleResetButton(setAllRows, setWinner, setPlayer, socket);
+            handleResetButton(mainStates);
           }}
         >
           Reset

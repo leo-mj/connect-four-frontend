@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Socket } from "socket.io-client";
+import { FindOpponent } from "./components/FindOpponent";
 import { GameBoard } from "./components/GameBoard";
 import "./styles.scss";
 import {
@@ -7,17 +8,22 @@ import {
   handleResetButton,
 } from "./utils/handleResetButton";
 import { cleanupSocketIO, handleSocket } from "./utils/handleSocket";
-import { Board, MainStates } from "./utils/types";
+import { Board, MainStates, OnlinePlayer } from "./utils/types";
 
 function App(): JSX.Element {
-  const [gameMode, setGameMode] = useState<"multiplayer" | "one-screen">(
-    "multiplayer"
-  );
+  const [gameMode, setGameMode] = useState<
+    "multiplayer" | "find-opponent" | "one-screen"
+  >("one-screen");
   const [allRows, setAllRows] = useState<Board>(generateEmptyBoard());
   const [player, setPlayer] = useState<"A" | "B">("A");
   const [myTurn, setMyTurn] = useState<boolean>(true);
   const [winner, setWinner] = useState<null | "A" | "B">(null);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[]>([]);
+  const [busyPlayers, setBusyPlayers] = useState<OnlinePlayer[]>([]);
+  const [chosenOpponent, setChosenOpponent] = useState<OnlinePlayer | null>(
+    null
+  );
 
   const mainStates: MainStates = {
     player: player,
@@ -30,11 +36,15 @@ function App(): JSX.Element {
     setAllRows: setAllRows,
     socket: socket,
     setSocket: setSocket,
+    gameMode: gameMode,
+    setGameMode: setGameMode,
+    onlinePlayers: onlinePlayers,
+    setOnlinePlayers: setOnlinePlayers,
+    busyPlayers: busyPlayers,
+    setBusyPlayers: setBusyPlayers,
+    chosenOpponent: chosenOpponent,
+    setChosenOpponent: setChosenOpponent,
   };
-
-  useEffect(() => {
-    handleSocket({ setAllRows, setMyTurn, setPlayer, setWinner, setSocket });
-  }, []);
 
   const handleOneScreenButton = () => {
     setGameMode("one-screen");
@@ -42,27 +52,40 @@ function App(): JSX.Element {
       cleanupSocketIO(socket);
     }
     setSocket(null);
-    handleResetButton(setAllRows, setWinner, setPlayer, socket);
+    handleResetButton(mainStates);
     setMyTurn(true);
   };
 
   const handleMultiPlayerButton = () => {
-    setGameMode("multiplayer");
-    handleSocket({ setAllRows, setMyTurn, setPlayer, setWinner, setSocket });
-    handleResetButton(setAllRows, setWinner, setPlayer, socket);
+    setGameMode("find-opponent");
+    handleSocket(mainStates);
+    handleResetButton(mainStates);
+  };
+
+  const handleLeaveGameButton = () => {
+    if (socket && chosenOpponent !== null) {
+      socket.emit("left game", chosenOpponent);
+    }
+    setGameMode("find-opponent");
   };
 
   return (
     <div className="app">
       <div className="game-mode-buttons">
-        {gameMode === "multiplayer" && (
+        {gameMode === "find-opponent" && (
           <button onClick={handleOneScreenButton}>Play on one screen</button>
         )}
         {gameMode === "one-screen" && (
           <button onClick={handleMultiPlayerButton}>Play online</button>
         )}
+        {gameMode === "multiplayer" && (
+          <button onClick={handleLeaveGameButton}>Leave game</button>
+        )}
       </div>
-      <GameBoard mainStates={mainStates} />
+      {gameMode === "find-opponent" && socket && (
+        <FindOpponent mainStates={mainStates} />
+      )}
+      {gameMode !== "find-opponent" && <GameBoard mainStates={mainStates} />}
     </div>
   );
 }

@@ -1,17 +1,19 @@
-import { Socket } from "socket.io-client";
-import { Board } from "./types";
+import { Board, MainStates } from "./types";
 
-export function handleResetButton(
-  setAllRows: React.Dispatch<React.SetStateAction<Board>>,
-  setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>,
-  setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>,
-  socket: Socket | null
-): void {
+export function handleResetButton({
+  setAllRows,
+  setWinner,
+  setPlayer,
+  setMyTurn,
+  socket,
+  chosenOpponent,
+}: MainStates): void {
   setAllRows(generateEmptyBoard());
   setWinner(null);
   setPlayer("A");
+  setMyTurn(true);
   if (socket) {
-    socket.emit("reset");
+    socket.emit("reset", chosenOpponent);
   }
 }
 

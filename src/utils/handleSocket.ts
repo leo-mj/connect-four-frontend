@@ -1,23 +1,22 @@
 import { io, Socket } from "socket.io-client";
 import { handleResetButton } from "./handleResetButton";
 import { socketURL } from "./socketURL";
-import { Board } from "./types";
+import { Board, MainStates, OnlinePlayer } from "./types";
 
-interface SocketParams {
-  setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>;
-  setMyTurn: React.Dispatch<React.SetStateAction<boolean>>;
-  setWinner: React.Dispatch<React.SetStateAction<"A" | "B" | null>>;
-  setAllRows: React.Dispatch<React.SetStateAction<Board>>;
-  setSocket: React.Dispatch<React.SetStateAction<Socket | null>>;
-}
+export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
+  const {
+    setAllRows,
+    setMyTurn,
+    setPlayer,
+    setWinner,
+    setSocket,
+    setOnlinePlayers,
+    setChosenOpponent,
+    setGameMode,
+    setBusyPlayers,
+  } = mainStates;
 
-export function handleSocket({
-  setAllRows,
-  setMyTurn,
-  setPlayer,
-  setWinner,
-  setSocket,
-}: SocketParams): (socket: Socket) => void {
+  // set up socket
   console.log("connecting to socket.io server");
   const newSocket: Socket = io(socketURL);
   setSocket(newSocket);
@@ -31,18 +30,57 @@ export function handleSocket({
   });
 
   newSocket.on("connect", () => console.log("fully connected"));
-  newSocket.on("reset", () =>
-    handleResetButton(setAllRows, setWinner, setPlayer, null)
+
+  // update online and busy player lists
+  newSocket.on(
+    "players online updated",
+    (playersOnline: OnlinePlayer[], playersBusy: OnlinePlayer[]) => {
+      setOnlinePlayers(playersOnline);
+      setBusyPlayers(playersBusy);
+    }
   );
+
+  // initiate and leave 1v1 game
+  newSocket.on("challenged", (challenger: OnlinePlayer) => {
+    const challengeAccepted = window.confirm(
+      `${challenger.username} is challenging you to a game. Do you accept?`
+    );
+    if (challengeAccepted) {
+      newSocket.emit("challenge accepted", challenger.id);
+      setChosenOpponent(challenger);
+      setGameMode("multiplayer");
+    } else {
+      newSocket.emit("challenge rejected");
+    }
+  });
+
+  newSocket.on("your challenge accepted", (yourOpponent: OnlinePlayer) => {
+    setChosenOpponent(yourOpponent);
+    setGameMode("multiplayer");
+  });
+
+  newSocket.on("player busy", (busyPlayer: OnlinePlayer) => {
+    window.alert(busyPlayer.username + " is in another game");
+  });
+
+  newSocket.on("opponent left game", (opponentName: string) => {
+    alert(opponentName + " has left the game");
+    setGameMode("find-opponent");
+  });
+
+  // play 1v1 game
   newSocket.on(
     "cell clicked by",
     (changedBoard: Board, otherPlayer: "A" | "B") => {
       setAllRows(changedBoard);
       setPlayer(otherPlayer === "A" ? "B" : "A");
+      setMyTurn(true);
     }
   );
-  newSocket.on("next player", () => setMyTurn(true));
+
   newSocket.on("game won by", (winner: "A" | "B") => setWinner(winner));
+
+  newSocket.on("reset", () => handleResetButton(mainStates));
 
   return cleanupSocketIO;
 }
