@@ -76,7 +76,11 @@ export function FindOpponent({ mainStates }: IPropsFindOpponent): JSX.Element {
         busy
         <div className="players">
           {busyPlayers.map((busyPlayer, i) => (
-            <button className="A" key={i}>
+            <button
+              className="A"
+              key={i}
+              onClick={() => handleOpponentChoice(busyPlayer)}
+            >
               {busyPlayer.username}
             </button>
           ))}

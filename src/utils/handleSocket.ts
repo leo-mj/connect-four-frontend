@@ -16,6 +16,7 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
     setBusyPlayers,
   } = mainStates;
 
+  // set up socket
   console.log("connecting to socket.io server");
   const newSocket: Socket = io(socketURL);
   setSocket(newSocket);
@@ -24,13 +25,13 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
   newSocket.prependAnyOutgoing((...args) => {
     console.log("sending to socket.io server: ", args);
   });
-
   newSocket.prependAny((...args) => {
     console.log("coming from socket.io server: ", args);
   });
 
   newSocket.on("connect", () => console.log("fully connected"));
 
+  // update online and busy player lists
   newSocket.on(
     "players online updated",
     (playersOnline: OnlinePlayer[], playersBusy: OnlinePlayer[]) => {
@@ -39,6 +40,7 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
     }
   );
 
+  // initiate and leave 1v1 game
   newSocket.on("challenged", (challenger: OnlinePlayer) => {
     const challengeAccepted = window.confirm(
       `${challenger.username} is challenging you to a game. Do you accept?`
@@ -61,8 +63,12 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
     window.alert(busyPlayer.username + " is in another game");
   });
 
-  newSocket.on("reset", () => handleResetButton(mainStates));
+  newSocket.on("opponent left game", (opponentName: string) => {
+    alert(opponentName + " has left the game");
+    setGameMode("find-opponent");
+  });
 
+  // play 1v1 game
   newSocket.on(
     "cell clicked by",
     (changedBoard: Board, otherPlayer: "A" | "B") => {
@@ -74,10 +80,7 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
 
   newSocket.on("game won by", (winner: "A" | "B") => setWinner(winner));
 
-  newSocket.on("opponent left game", (opponentName: string) => {
-    alert(opponentName + " has left the game");
-    setGameMode("find-opponent");
-  });
+  newSocket.on("reset", () => handleResetButton(mainStates));
 
   return cleanupSocketIO;
 }

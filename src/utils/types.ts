@@ -6,6 +6,11 @@ export type Col = (null | "A" | "B")[];
 export type Diagonal = (null | "A" | "B")[];
 export type CellValue = null | "A" | "B";
 
+export interface OnlinePlayer {
+  username: string;
+  id: string;
+}
+
 export interface MainStates {
   player: "A" | "B";
   setPlayer: React.Dispatch<React.SetStateAction<"A" | "B">>;
@@ -27,9 +32,4 @@ export interface MainStates {
   setBusyPlayers: React.Dispatch<React.SetStateAction<OnlinePlayer[]>>;
   chosenOpponent: OnlinePlayer | null;
   setChosenOpponent: React.Dispatch<React.SetStateAction<OnlinePlayer | null>>;
-}
-
-export interface OnlinePlayer {
-  username: string;
-  id: string;
 }
