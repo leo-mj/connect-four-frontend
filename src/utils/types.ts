@@ -30,6 +30,8 @@ export interface MainStates {
   setOnlinePlayers: React.Dispatch<React.SetStateAction<OnlinePlayer[]>>;
   busyPlayers: OnlinePlayer[];
   setBusyPlayers: React.Dispatch<React.SetStateAction<OnlinePlayer[]>>;
+  isOnline: Boolean;
+  setIsOnline: React.Dispatch<React.SetStateAction<boolean>>;
   chosenOpponent: OnlinePlayer | null;
   setChosenOpponent: React.Dispatch<React.SetStateAction<OnlinePlayer | null>>;
 }

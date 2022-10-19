@@ -14,16 +14,19 @@ function App(): JSX.Element {
   const [gameMode, setGameMode] = useState<
     "multiplayer" | "find-opponent" | "one-screen"
   >("one-screen");
+
   const [allRows, setAllRows] = useState<Board>(generateEmptyBoard());
   const [player, setPlayer] = useState<"A" | "B">("A");
-  const [myTurn, setMyTurn] = useState<boolean>(true);
   const [winner, setWinner] = useState<null | "A" | "B">(null);
+
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [isOnline, setIsOnline] = useState<boolean>(false);
   const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[]>([]);
   const [busyPlayers, setBusyPlayers] = useState<OnlinePlayer[]>([]);
   const [chosenOpponent, setChosenOpponent] = useState<OnlinePlayer | null>(
     null
   );
+  const [myTurn, setMyTurn] = useState<boolean>(true);
 
   const mainStates: MainStates = {
     player: player,
@@ -42,6 +45,8 @@ function App(): JSX.Element {
     setOnlinePlayers: setOnlinePlayers,
     busyPlayers: busyPlayers,
     setBusyPlayers: setBusyPlayers,
+    isOnline: isOnline,
+    setIsOnline: setIsOnline,
     chosenOpponent: chosenOpponent,
     setChosenOpponent: setChosenOpponent,
   };
