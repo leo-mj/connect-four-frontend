@@ -6,10 +6,9 @@ interface IPropsFindOpponent {
 }
 
 export function FindOpponent({ mainStates }: IPropsFindOpponent): JSX.Element {
-  const { onlinePlayers, busyPlayers, socket } = mainStates;
-
+  const { isOnline, setIsOnline, onlinePlayers, busyPlayers, socket } =
+    mainStates;
   const [username, setUsername] = useState<string>("");
-  const [isOnline, setIsOnline] = useState<boolean>(false);
 
   if (socket === null) {
     return <>Something has gone wrong</>;
