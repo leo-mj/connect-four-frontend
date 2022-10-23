@@ -2,6 +2,12 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+footer {
+  margin-top: 1%;
+  display: flex;
+  justify-content: center;
+}
+
 .app {
   padding: 1% 32% 32% 32%;
 }
@@ -89,6 +95,7 @@ body {
   .player-group {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     border: 1px solid black;
     border-radius: 3px;
@@ -99,13 +106,14 @@ body {
 
   .players {
     display: flex;
-    justify-content: center;
-    margin: 5%;
+    flex-wrap: wrap;
+    padding: 1%;
 
     button {
       font-size: xx-large;
       border-radius: 3px;
-      margin: 10%;
+      margin: 2%;
+      padding: 3%;
     }
 
     button:hover {

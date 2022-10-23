@@ -50,13 +50,17 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
       setChosenOpponent(challenger);
       setGameMode("multiplayer");
     } else {
-      newSocket.emit("challenge rejected");
+      newSocket.emit("challenge declined", challenger.id);
     }
   });
 
   newSocket.on("your challenge accepted", (yourOpponent: OnlinePlayer) => {
     setChosenOpponent(yourOpponent);
     setGameMode("multiplayer");
+  });
+
+  newSocket.on("your challenge declined", (yourOpponent: OnlinePlayer) => {
+    alert(yourOpponent.username + " has declined your challenge");
   });
 
   newSocket.on("player busy", (busyPlayer: OnlinePlayer) => {
