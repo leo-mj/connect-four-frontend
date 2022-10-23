@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MainStates, OnlinePlayer } from "../utils/types";
 
 interface IPropsFindOpponent {
@@ -6,9 +5,15 @@ interface IPropsFindOpponent {
 }
 
 export function FindOpponent({ mainStates }: IPropsFindOpponent): JSX.Element {
-  const { isOnline, setIsOnline, onlinePlayers, busyPlayers, socket } =
-    mainStates;
-  const [username, setUsername] = useState<string>("");
+  const {
+    username,
+    setUsername,
+    isOnline,
+    setIsOnline,
+    onlinePlayers,
+    busyPlayers,
+    socket,
+  } = mainStates;
 
   if (socket === null) {
     return <>Something has gone wrong</>;
@@ -50,11 +55,9 @@ export function FindOpponent({ mainStates }: IPropsFindOpponent): JSX.Element {
       <div className="player-group">
         online
         <div className="players">
-          {isOnline && <button className="B">you</button>}
           {onlinePlayers
             .filter(
               (onlinePlayer) =>
-                onlinePlayer.id !== socket.id &&
                 !busyPlayers.some(
                   (busyPlayer) => busyPlayer.id === onlinePlayer.id
                 )
@@ -65,6 +68,10 @@ export function FindOpponent({ mainStates }: IPropsFindOpponent): JSX.Element {
                 key={i}
                 onClick={() => handleOpponentChoice(onlinePlayer)}
                 disabled={!isOnline}
+                style={{
+                  backgroundColor:
+                    socket.id === onlinePlayer.id ? "#8eecf5" : "#06d6a0",
+                }}
               >
                 {onlinePlayer.username}
               </button>
@@ -79,6 +86,10 @@ export function FindOpponent({ mainStates }: IPropsFindOpponent): JSX.Element {
               className="A"
               key={i}
               onClick={() => handleOpponentChoice(busyPlayer)}
+              style={{
+                backgroundColor:
+                  socket.id === busyPlayer.id ? "#8eecf5" : "#ef476f",
+              }}
             >
               {busyPlayer.username}
             </button>

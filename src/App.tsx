@@ -20,6 +20,7 @@ function App(): JSX.Element {
   const [winner, setWinner] = useState<null | "A" | "B">(null);
 
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [username, setUsername] = useState<string>("");
   const [isOnline, setIsOnline] = useState<boolean>(false);
   const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[]>([]);
   const [busyPlayers, setBusyPlayers] = useState<OnlinePlayer[]>([]);
@@ -42,6 +43,8 @@ function App(): JSX.Element {
     gameMode: gameMode,
     setGameMode: setGameMode,
     onlinePlayers: onlinePlayers,
+    username: username,
+    setUsername: setUsername,
     setOnlinePlayers: setOnlinePlayers,
     busyPlayers: busyPlayers,
     setBusyPlayers: setBusyPlayers,
@@ -58,6 +61,7 @@ function App(): JSX.Element {
     }
     setSocket(null);
     handleResetButton(mainStates);
+
     setMyTurn(true);
   };
 
