@@ -3,7 +3,9 @@ import { handleResetButton } from "./handleResetButton";
 import { socketURL } from "./socketURL";
 import { Board, MainStates, OnlinePlayer } from "./types";
 
-export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
+export function handleSocket(
+  mainStates: MainStates
+): (socket: Socket, mainStates: MainStates) => void {
   const {
     setAllRows,
     setMyTurn,
@@ -89,8 +91,9 @@ export function handleSocket(mainStates: MainStates): (socket: Socket) => void {
   return cleanupSocketIO;
 }
 
-export function cleanupSocketIO(socket: Socket): void {
+export function cleanupSocketIO(socket: Socket, mainStates: MainStates): void {
   console.log("disconnecting from socket.io server, deregistering listeners");
   socket.removeAllListeners();
   socket.disconnect();
+  mainStates.setGameMode("one-screen");
 }

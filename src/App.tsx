@@ -57,7 +57,7 @@ function App(): JSX.Element {
   const handleOneScreenButton = () => {
     setGameMode("one-screen");
     if (socket) {
-      cleanupSocketIO(socket);
+      cleanupSocketIO(socket, mainStates);
     }
     setSocket(null);
     handleResetButton(mainStates);

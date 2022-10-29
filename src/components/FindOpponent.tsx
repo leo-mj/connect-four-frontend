@@ -53,7 +53,7 @@ export function FindOpponent({ mainStates }: IPropsFindOpponent): JSX.Element {
         </div>
       )}
       <div className="player-group">
-        online
+        Available Players
         <div className="players">
           {onlinePlayers
             .filter(
@@ -62,38 +62,31 @@ export function FindOpponent({ mainStates }: IPropsFindOpponent): JSX.Element {
                   (busyPlayer) => busyPlayer.id === onlinePlayer.id
                 )
             )
-            .map((onlinePlayer, i) => (
-              <button
-                className="B"
-                key={i}
-                onClick={() => handleOpponentChoice(onlinePlayer)}
-                disabled={!isOnline}
-                style={{
-                  backgroundColor:
-                    socket.id === onlinePlayer.id ? "#8eecf5" : "#06d6a0",
-                }}
-              >
-                {onlinePlayer.username}
-              </button>
+            .map((onlinePlayer) => (
+              <div className="players" key={onlinePlayer.id}>
+                {onlinePlayer.id !== socket.id && (
+                  <button
+                    className="B"
+                    onClick={() => handleOpponentChoice(onlinePlayer)}
+                    disabled={!isOnline}
+                  >
+                    {onlinePlayer.username}
+                  </button>
+                )}
+                {onlinePlayer.id === socket.id && (
+                  <button
+                    className="B"
+                    onClick={() => handleOpponentChoice(onlinePlayer)}
+                    disabled={!isOnline}
+                    style={{
+                      backgroundColor: "#8eecf5",
+                    }}
+                  >
+                    You
+                  </button>
+                )}
+              </div>
             ))}
-        </div>
-      </div>
-      <div className="player-group">
-        busy
-        <div className="players">
-          {busyPlayers.map((busyPlayer, i) => (
-            <button
-              className="A"
-              key={i}
-              onClick={() => handleOpponentChoice(busyPlayer)}
-              style={{
-                backgroundColor:
-                  socket.id === busyPlayer.id ? "#8eecf5" : "#ef476f",
-              }}
-            >
-              {busyPlayer.username}
-            </button>
-          ))}
         </div>
       </div>
     </div>
